@@ -80,3 +80,12 @@ Continue entering moves, till the game is over.
 <img src="https://github.com/yribeiro/gpt4-tictactoe/blob/main/docs/imgs/finalmove.png?raw=true"/>
 
 Hit `Ctrl+F5` to refresh the app and start a new game!
+
+## Feature Roadmap
+
+* Allow ChatGPT to start first
+* Generate image using DallE for the tic tac toe board representation
+* Allow user to select style for the board image
+* Refactor to include Controller that can be extended for Console and WebApp interaction
+* Generate text to voice functionality to allow ChatGPT to describe it's move
+* Allow user to select voice type for ChatGPT
