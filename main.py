@@ -86,7 +86,7 @@ def get_human_and_bot_mark()-> Tuple[str, str]:
     return human_mark, bot_mark
 
 
-def run_console_app(board: TicTacToeBoard, chain: LLMChain):
+def run_console_app(chain: LLMChain, board: TicTacToeBoard = TicTacToeBoard()):
     human_mark, bot_mark = get_human_and_bot_mark()
 
     if human_mark == "X":
@@ -116,6 +116,9 @@ def run_console_app(board: TicTacToeBoard, chain: LLMChain):
             break
 
 def run_web_app(chain: LLMChain):
+    if "board" not in st.session_state:
+        st.session_state["board"] = TicTacToeBoard()
+
     st.header("Tic Tac Toe with ChatGPT")
     st.text("You are playing against a bot that uses ChatGPT to play Tic Tac Toe.")
 
@@ -158,10 +161,6 @@ if __name__ == "__main__":
     chat_prompt = ChatPromptTemplate.from_messages([prompt])
     llm = OpenAI(temperature=0.9)
     chain = LLMChain(llm=llm, prompt=chat_prompt)
-
-    # create tic tac toe related objects
-    if "board" not in st.session_state:
-        st.session_state["board"] = TicTacToeBoard()
 
     # start application
     run_web_app(chain)
