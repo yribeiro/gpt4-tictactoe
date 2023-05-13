@@ -89,3 +89,4 @@ Hit `Ctrl+F5` to refresh the app and start a new game!
 * Refactor to include Controller that can be extended for Console and WebApp interaction
 * Generate text to voice functionality to allow ChatGPT to describe it's move
 * Allow user to select voice type for ChatGPT
+* Allow user to play in console mode
