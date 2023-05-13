@@ -125,7 +125,8 @@ def run_web_app(chain: LLMChain):
     st.header("Tic Tac Toe with ChatGPT")
     st.text("You are playing against a bot that uses ChatGPT to play Tic Tac Toe.")
 
-    human_mark = st.text_input("Enter your mark ( X or O ): ", key="human_mark_text_input")
+    st.header("Choose your mark")
+    human_mark = st.text_input("( X or O ): ", key="human_mark_text_input")
 
     if "game_over" in st.session_state:
         st.warning("Refresh (Ctrl + F5) the page to play again.")
@@ -136,6 +137,7 @@ def run_web_app(chain: LLMChain):
             bot_mark = "X" if human_mark == "O" else "O"
             st.text(f"Your mark: '{human_mark}', Bot mark: '{bot_mark}'")
 
+            st.header("Choose your move")
             if human_mark == "X":
                 human_move = st.text_input("You are playing first. Enter your move in the format <row>, <col>.")
             else:
