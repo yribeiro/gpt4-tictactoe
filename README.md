@@ -56,3 +56,27 @@ streamlit run main.py
 Your default browser should open up to the default app page.
 
 <img src="https://github.com/yribeiro/gpt4-tictactoe/blob/main/docs/imgs/homescreen.png?raw=true"/>
+
+## Beat ChatGPT
+
+Enter `X` and hit `Enter` to start playing:
+
+</img>
+
+Enter your first move from the choices:
+
+`[(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 1), (3, 2), (3, 3)]`
+
+E.g. `2, 2` and hit `Enter`
+
+<img src="https://github.com/yribeiro/gpt4-tictactoe/blob/main/docs/imgs/choosex.png?raw=true"/>
+
+ChatGPT will response and the board will get drawn.
+
+<img src="https://github.com/yribeiro/gpt4-tictactoe/blob/main/docs/imgs/chatgptmove.png?raw=true"/>
+
+Continue entering moves, till the game is over.
+
+<img src="https://github.com/yribeiro/gpt4-tictactoe/blob/main/docs/imgs/finalmove.png?raw=true"/>
+
+Hit `Ctrl+F5` to refresh the app and start a new game!
