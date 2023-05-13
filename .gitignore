@@ -1,0 +1,7 @@
+.venv
+.env
+
+# data folders and files
+data/
+faiss_index/
+*.pdf
