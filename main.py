@@ -43,7 +43,7 @@ def get_human_move_from_input(board, tries: int = 1) -> Tuple[int, int]:
         raise Exception("Exceeded maximum number of tries.")
 
     try:
-        human_move = input("Enter your move: ")
+        human_move = input("Enter your move (<row>, <col>): ")
         human_move = human_move.split(",")
         human_move = tuple([int(x.strip()) for x in human_move])
         check_move(board, human_move)
