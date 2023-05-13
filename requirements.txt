@@ -1,9 +1,4 @@
 openai
 langchain
-faiss-cpu
-pypdf2
-tiktoken
-pandas
-tabulate
-jq
 python-dotenv
+streamlit
