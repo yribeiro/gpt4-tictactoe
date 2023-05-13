@@ -5,12 +5,29 @@ import dotenv
 from tictactoe.templates import TEMPLATE
 
 def check_move(board: list, move: tuple):
+    """
+    Check if a move is valid.
+
+    Args:
+        board (list): board state.
+        move (tuple): move to check.
+    """
     assert len(move) == 2, "Invalid move. Must be in the format (<ROW>, <COL>)"
     assert move[0] in [1, 2, 3], "Invalid move. <ROW> must be between 1 and 3 inclusive."
     assert move[1] in [1, 2, 3], "Invalid move. <COL> must be between 1 and 3 inclusive."
     assert board[move[0]-1][move[1]-1] == " ", "Invalid move. Square is already occupied."
 
 def check_win(board: list, mark: str) -> bool:
+    """
+    Check if a player has won.
+
+    Args:
+        board (list): board state.
+        mark (str): mark to check.
+
+    Returns:
+        bool: True if player has won, False otherwise.
+    """
     for i in range(3):
         if board[i][0] == mark and board[i][1] == mark and board[i][2] == mark:
             return True
@@ -23,6 +40,15 @@ def check_win(board: list, mark: str) -> bool:
     return False
 
 def check_tie(board: list) -> bool:
+    """
+    Check if the game is a tie.
+
+    Args:
+        board (list): board state.
+
+    Returns:
+        bool: True if game is a tie, False otherwise.
+    """
     for i in range(3):
         for j in range(3):
             if board[i][j] == " ":
@@ -30,6 +56,16 @@ def check_tie(board: list) -> bool:
     return True
 
 def check_win_or_tie(board: list, mark: str) -> bool:
+    """
+    Check if a player has won or if the game is a tie.
+
+    Args:
+        board (list): board state.
+        mark (str): mark to check.
+
+    Returns:
+        bool: True if player has won or if the game is a tie, False otherwise.
+    """
     if check_win(board, mark):
         print(f"{mark} wins!")
         return True
@@ -38,7 +74,20 @@ def check_win_or_tie(board: list, mark: str) -> bool:
         return True
     return False
 
-def get_human_move_from_input(board, tries: int = 1) -> Tuple[int, int]:
+def get_human_move_from_input(board: list, tries: int = 1) -> Tuple[int, int]:
+    """
+    Get a move from the user.
+
+    Args:
+        board (list): board state.
+        tries (int, optional): Number of tries so far. Defaults to 1.
+
+    Raises:
+        Exception: Exceeded maximum number of tries.
+
+    Returns:
+        Tuple[int, int]: move with x and y coordinates.
+    """
     if tries > 3:
         raise Exception("Exceeded maximum number of tries.")
 
@@ -53,7 +102,24 @@ def get_human_move_from_input(board, tries: int = 1) -> Tuple[int, int]:
         
     return human_move
 
-def get_bot_move_from_chain(chain: LLMChain, history: list, board: list, botmark: str, oppmark: str, tries: int = 1) -> Tuple[int, int]:
+def get_bot_move_from_chain(chain: LLMChain, history: list, board: list, botmark: str, oppmark: str, tries: int = 1) -> Tuple[int, int]:#
+    """
+    Get a move from the bot.
+
+    Args:
+        chain (LLMChain): Langchain chain containing the model.
+        history (list): History of moves on the board.
+        board (list): Board state.
+        botmark (str): Mark for the tic tac toe bot.
+        oppmark (str): Mark for the opponent.
+        tries (int, optional): Number of tries so far. Defaults to 1.
+
+    Raises:
+        Exception: Unable to find a valid move.
+
+    Returns:
+        Tuple[int, int]: move with x and y coordinates.
+    """
     print("-"*50)
     print(f"Bot is thinking... (Attempt {tries+1}/3)")
     
@@ -74,10 +140,25 @@ def get_bot_move_from_chain(chain: LLMChain, history: list, board: list, botmark
     return bot_move
 
 def handle_move(history: list, board: list, mark: str, move: tuple):
+    """
+    Handle a move.
+
+    Args:
+        history (list): History of the board moves.
+        board (list): Board state.
+        mark (str): Mark to place on the board.
+        move (tuple): Move with x and y coordinates.
+    """
     board[move[0]-1][move[1]-1] = mark
     history.append(f"{mark}: ({move[0]}, {move[1]})")
 
 def get_human_and_bot_mark()-> Tuple[str, str]:
+    """
+    Get the human and bot marks.
+
+    Returns:
+        Tuple[str, str]: human and bot marks.
+    """
     human_mark = input("Enter your mark (X or O): ")
     human_mark = human_mark.upper()
     assert human_mark in ["X", "O"], "Invalid mark. Must be either X or O."
@@ -85,6 +166,12 @@ def get_human_and_bot_mark()-> Tuple[str, str]:
     return human_mark, bot_mark
 
 def print_board(board: list):
+    """
+    Print the board.
+
+    Args:
+        board (list): board state.
+    """
     print()
     print("Board:")
     for row in board:
