@@ -120,3 +120,16 @@ class TicTacToeBoard:
         print("-"*len(row_str))
         print()
 
+    def board_ascii(self) -> str:
+        """
+        Returns:
+            str: board as ASCII art.
+        """
+        board = ""
+        for row in self._board:
+            row_str = f" {row[0]} | {row[1]} | {row[2]} "
+            board += "-"*len(row_str) + "\n"
+            board += row_str + "\n"
+        board += "-"*len(row_str) + "\n"
+        return board
+

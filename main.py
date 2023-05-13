@@ -4,9 +4,7 @@ from langchain.prompts.chat import SystemMessagePromptTemplate, ChatPromptTempla
 import dotenv
 from tictactoe.templates import TEMPLATE
 from tictactoe.board import TicTacToeBoard
-
-
-
+import streamlit as st
 
 
 def get_human_move_from_input(board: TicTacToeBoard, tries: int = 1) -> Tuple[int, int]:
@@ -117,6 +115,41 @@ def run_console_app(board: TicTacToeBoard, chain: LLMChain):
             game_over = True
             break
 
+def run_web_app(chain: LLMChain):
+    st.header("Tic Tac Toe with ChatGPT")
+    st.text("You are playing against a bot that uses ChatGPT to play Tic Tac Toe.")
+
+    human_mark = st.text_input("Enter your mark (X or O): ")
+
+    if human_mark != "":
+        human_mark = human_mark.upper()
+        assert human_mark in ["X", "O"], "Invalid mark. Must be either X or O."
+        bot_mark = "X" if human_mark == "O" else "O"
+        st.text(f"Your mark: '{human_mark}', Bot mark: '{bot_mark}'")
+
+        if human_mark == "X":
+            human_move = st.text_input("You are playing first. Enter your move in the format <row>, <col>.")
+        else:
+            # bot plays first
+            bot_move = get_bot_move_from_chain(chain, st.session_state["board"], bot_mark, human_mark)
+            st.session_state["board"].handle_move(bot_mark, bot_move)
+            st.text(f"Bot move: {bot_move}")
+            st.write(st.session_state["board"].board_ascii())
+
+            human_move = st.text_input("You are playing second. Enter your move in the format <row>, <col>.")
+            
+        if human_move != "":
+            human_move = human_move.split(",")
+            human_move = tuple([int(x.strip()) for x in human_move])
+            st.session_state["board"].check_move(human_move)
+            st.session_state["board"].handle_move(human_mark, human_move)
+
+            # bot plays second
+            bot_move = get_bot_move_from_chain(chain, st.session_state["board"], bot_mark, human_mark)
+            st.session_state["board"].handle_move(bot_mark, bot_move)
+            st.text(f"Bot move: {bot_move}")
+            st.text(st.session_state["board"].board_ascii())
+
 if __name__ == "__main__":
     dotenv.load_dotenv("./.env")
     
@@ -127,8 +160,9 @@ if __name__ == "__main__":
     chain = LLMChain(llm=llm, prompt=chat_prompt)
 
     # create tic tac toe related objects
-    board = TicTacToeBoard()
+    if "board" not in st.session_state:
+        st.session_state["board"] = TicTacToeBoard()
 
     # start application
-    run_console_app(board, chain)
+    run_web_app(chain)
     
