@@ -1,4 +1,5 @@
-from typing import Tuple
+import copy
+from typing import Optional, Tuple
 from langchain import OpenAI, LLMChain
 from langchain.prompts.chat import SystemMessagePromptTemplate, ChatPromptTemplate
 import dotenv
@@ -119,46 +120,64 @@ def run_web_app(chain: LLMChain):
     if "board" not in st.session_state:
         st.session_state["board"] = TicTacToeBoard()
 
+    final_board: Optional[TicTacToeBoard] = None
+
     st.header("Tic Tac Toe with ChatGPT")
     st.text("You are playing against a bot that uses ChatGPT to play Tic Tac Toe.")
 
     human_mark = st.text_input("Enter your mark ( X or O ): ", key="human_mark_text_input")
 
-    if human_mark != "":
-        human_mark = human_mark.upper()
-        assert human_mark in ["X", "O"], "Invalid mark. Must be either X or O."
-        bot_mark = "X" if human_mark == "O" else "O"
-        st.text(f"Your mark: '{human_mark}', Bot mark: '{bot_mark}'")
+    if "game_over" in st.session_state:
+        st.warning("Refresh (Ctrl + F5) the page to play again.")
+    else:
+        if human_mark != "":
+            human_mark = human_mark.upper()
+            assert human_mark in ["X", "O"], "Invalid mark. Must be either X or O."
+            bot_mark = "X" if human_mark == "O" else "O"
+            st.text(f"Your mark: '{human_mark}', Bot mark: '{bot_mark}'")
 
-        if human_mark == "X":
-            human_move = st.text_input("You are playing first. Enter your move in the format <row>, <col>.")
-        else:
-            # bot plays first
-            bot_move = get_bot_move_from_chain(chain, st.session_state["board"], bot_mark, human_mark)
-            st.session_state["board"].handle_move(bot_mark, bot_move)
-            st.text(f"Bot move: {bot_move}")
-            st.text(st.session_state["board"].board_ascii())
-            human_move = st.text_input("You are playing second. Enter your move in the format <row>, <col>.")
-            
-        if human_move != "":
-            human_move = human_move.split(",")
-            human_move = tuple([int(x.strip()) for x in human_move])
-            st.session_state["board"].check_move(human_move)
-            st.session_state["board"].handle_move(human_mark, human_move)
+            if human_mark == "X":
+                human_move = st.text_input("You are playing first. Enter your move in the format <row>, <col>.")
+            else:
+                # # bot plays first
+                # bot_move = get_bot_move_from_chain(chain, st.session_state["board"], bot_mark, human_mark)
+                # st.session_state["board"].handle_move(bot_mark, bot_move)
+                # st.text(f"Bot move: {bot_move}")
+                # st.text(st.session_state["board"].board_ascii())
+                # human_move = st.text_input("You are playing second. Enter your move in the format <row>, <col>.")
+                raise NotImplementedError("Bot playing first is not implemented yet.")
+                
+            if human_move != "":
+                human_move = human_move.split(",")
+                human_move = tuple([int(x.strip()) for x in human_move])
+                st.session_state["board"].check_move(human_move)
+                st.session_state["board"].handle_move(human_mark, human_move)
 
-            if st.session_state["board"].check_win_or_tie(human_mark):
-                st.success("You won!")
-                st.session_state["board"] = TicTacToeBoard()
+                if st.session_state["board"].check_win_or_tie(human_mark):
+                    st.success("You won!")
+                    final_board = copy.deepcopy(st.session_state["board"])
+                    st.session_state["board"] = TicTacToeBoard()
+                    st.session_state["game_over"] = True
+                    st.info("Refresh (Ctrl + F5) the page to play again.")
+                else:
+                    # bot plays second
+                    bot_move = get_bot_move_from_chain(chain, st.session_state["board"], bot_mark, human_mark)
+                    st.session_state["board"].handle_move(bot_mark, bot_move)
+                    st.info(f"ChatGPT Played: {bot_move}")
 
-            # bot plays second
-            bot_move = get_bot_move_from_chain(chain, st.session_state["board"], bot_mark, human_mark)
-            st.session_state["board"].handle_move(bot_mark, bot_move)
-            st.text(f"Bot move: {bot_move}")
-            st.text(st.session_state["board"].board_ascii())
-
-            if st.session_state["board"].check_win_or_tie(human_mark):
-                st.error("You lost!")
-                st.session_state["board"] = TicTacToeBoard()
+                    if st.session_state["board"].check_win_or_tie(bot_mark):
+                        st.error("You lost!")
+                        final_board = copy.deepcopy(st.session_state["board"])
+                        st.session_state["board"] = TicTacToeBoard()
+                        st.session_state["game_over"] = True
+                        st.info("Refresh (Ctrl + F5) the page to play again.")
+                
+                if final_board is not None:
+                    st.header("Final Board")
+                    st.text(final_board.board_ascii())
+                else:
+                    st.header("Board")
+                    st.text(st.session_state["board"].board_ascii())
 
 if __name__ == "__main__":
     dotenv.load_dotenv("./.env")
