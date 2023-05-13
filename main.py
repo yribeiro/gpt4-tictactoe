@@ -88,19 +88,7 @@ def get_human_and_bot_mark()-> Tuple[str, str]:
     return human_mark, bot_mark
 
 
-if __name__ == "__main__":
-    dotenv.load_dotenv("./.env")
-    
-    # create AI related objects
-    prompt = SystemMessagePromptTemplate.from_template(TEMPLATE)
-    chat_prompt = ChatPromptTemplate.from_messages([prompt])
-    llm = OpenAI(temperature=0.9)
-    chain = LLMChain(llm=llm, prompt=chat_prompt)
-
-    # create tic tac toe related objects
-    board = TicTacToeBoard()
-
-    # start application
+def run_console_app(board: TicTacToeBoard, chain: LLMChain):
     human_mark, bot_mark = get_human_and_bot_mark()
 
     if human_mark == "X":
@@ -128,3 +116,19 @@ if __name__ == "__main__":
         if board.check_win_or_tie(human_mark):
             game_over = True
             break
+
+if __name__ == "__main__":
+    dotenv.load_dotenv("./.env")
+    
+    # create AI related objects
+    prompt = SystemMessagePromptTemplate.from_template(TEMPLATE)
+    chat_prompt = ChatPromptTemplate.from_messages([prompt])
+    llm = OpenAI(temperature=0.9)
+    chain = LLMChain(llm=llm, prompt=chat_prompt)
+
+    # create tic tac toe related objects
+    board = TicTacToeBoard()
+
+    # start application
+    run_console_app(board, chain)
+    
